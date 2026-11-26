@@ -97,13 +97,11 @@ button:
 
 ```bash
 umi
-python3 collect.py --test-button         # 버튼만: 누를 때마다 줄이 뜨면 정상
-python3 collect.py                       # 전체: 버튼 빠르게 2번(또는 o)으로 원점 설정 (6번 그림) 후 Rerun의 그리퍼가 실제와 같이 움직이면 정상
-python3 collect.py --no-dxl --no-cam     # 트래커만
-python3 collect.py --no-vive --no-cam    # 트리거 → 그리퍼만
-python3 collect.py --no-vive --no-dxl    # 카메라만 (좌우 확인)
+python3 collect.py
 ```
-정상: 상태 줄에 tracker·gripper·cam 빨간 경고 없음.
+1. 상태 줄에 빨간 경고 없음 (tracker·gripper·cam·button)
+2. 버튼 빠르게 2번(또는 `o`) → 원점 설정 (아래 그림) → Rerun의 그리퍼가 실제와 같이 움직임
+3. 트리거를 당기면 그리퍼가 따라 닫힘, 카메라 좌우가 맞음
 
 | 입력 | 동작 |
 |---|---|
@@ -112,18 +110,6 @@ python3 collect.py --no-vive --no-dxl    # 카메라만 (좌우 확인)
 | 버튼 빠르게 3번 / `d` | 현재(또는 직전) 에피소드 삭제 (되돌릴 수 없음) |
 | `t` / `q` | task 변경 / 종료 (mp4 압축이 끝날 때까지 기다림) |
 
-## 6. 수집
-
-```bash
-umi
-python3 collect.py --data cup         # data/cup에 저장
-```
-
-1. 세션 시작 시 원점 설정 (아래). 원점 없이 녹화한 에피소드는 변환에서 빠짐.
-2. 에피소드마다: 버튼 → 작업 → 버튼 ("start" / "stop" 음성).
-3. "tracking changed, set origin again" 음성 → 원점 다시 (녹화 중이었으면 "discard": 그 에피소드 버림). SteamVR을 켜고 5분쯤 뒤에 원점을 잡으면 덜 생김.
-4. 카메라가 빠지면 collect 재실행 (원점 유지).
-
 **원점 = 테이블 모서리 중점, 테이블 면**
 
 ![원점 설정](docs/origin.jpg)
@@ -131,6 +117,21 @@ python3 collect.py --data cup         # data/cup에 저장
 - 손잡이 바닥을 책상에 평평하게 세우고, 바닥 뒤 모서리를 테이블 모서리에 맞춤. 손가락은 테이블 안쪽, 모서리와 수직.
 - 양손: 두 그리퍼 사이 중점이 원점 → 모서리 중점 기준 좌우 대칭. 한손: 모서리 중점.
 - 베이스스테이션을 옮기면 다시 설정.
+
+## 6. 수집
+
+```bash
+umi
+python3 collect.py --data cup         # data/cup에 저장
+```
+
+1. 그리퍼를 테이블 모서리에 세움 (5번 그림) → 버튼 빠르게 2번 → 1초 가만히 → "origin set" 음성. 세션 시작 때 한 번 (원점 없이 녹화한 에피소드는 변환에서 빠짐).
+2. 버튼 1번 → "start" 음성 → 작업.
+3. 작업 끝 → 버튼 1번 → "stop" 음성. 다음 에피소드는 2번부터.
+
+문제가 생기면:
+- "tracking changed, set origin again" 음성 → 원점 다시 (녹화 중이었으면 "discard": 그 에피소드 버림). SteamVR을 켜고 5분쯤 뒤에 원점을 잡으면 덜 생김.
+- 카메라가 빠짐 → collect 재실행 (원점 유지).
 
 ## 7. 데이터셋 변환
 
