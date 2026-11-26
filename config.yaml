@@ -1,0 +1,91 @@
+# data is recorded raw; coordinate transforms happen in the align step
+
+task: "put all the fruits in the bowl"   # language instruction (change live with 't')
+hands: [left, right]         # one hand: e.g. [right]
+origin_max_age_h: 12
+
+vive:
+  rate_hz: 200
+  serials:                   # --list-vive
+    left: LHR-0AB89868
+    right: LHR-E0EC229E
+
+dynamixel:
+  rate_hz: 100
+  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT89FAJ1-if00-port0   # U2D2 (/dev/ttyUSB0)
+  baudrate: 1000000
+  hands:                     # gripper_open/closed: --calib-dxl; trigger_open/closed are fixed
+    left:
+      trigger_id: 1          # XC330-T181-T (12V, TTL)
+      gripper_id: 2          # XM430-W350
+      trigger_open: 1800     # raw; opening further is clamped to gripper_open
+      trigger_closed: 2550
+      gripper_open: 585
+      gripper_closed: 2104
+      gripper_goal_current: 300   # grip force limit (Goal Current raw, ~0.8 A)
+      trigger_spring_current: 40  # return spring max force (Goal Current raw, <= Current Limit)
+      trigger_spring_p_gain: 100  # stiffness (Position P Gain raw)
+      trigger_spring_d_gain: 200  # damping (Position D Gain raw); too high feels notchy, raise if it wobbles on release
+    right:
+      trigger_id: 3
+      gripper_id: 4
+      trigger_open: 1800     # same raw as left: mirrored mount, but id 3 uses reversed Drive Mode
+      trigger_closed: 2550
+      gripper_open: 592
+      gripper_closed: 2116
+      gripper_goal_current: 300
+      trigger_spring_current: 40
+      trigger_spring_p_gain: 100
+      trigger_spring_d_gain: 200
+
+cameras:
+  left:
+    device: /dev/v4l/by-path/pci-0000:00:14.0-usb-0:4:1.0-video-index0   # USB-C adapter (left gripper camera)
+    width: 1280
+    height: 720
+    fps: 30
+    latency_ms: 0.0          # latency correction vs V4L2 buffer time (not measured yet)
+    exposure: 120            # 100 µs units (120 = 12 ms, <= 333 at 30 fps); null = auto (fps drops in low light)
+    gain: 64                 # 0-255 (no effect on the 120° FaceCam 3000AF)
+    gamma: 130               # 100-300 (default 110); null = keep camera value
+    wb_temp: 3800            # white balance [K] 2800-6500; null = auto
+  right:
+    device: /dev/v4l/by-path/pci-0000:00:14.0-usb-0:3:1.0-video-index0   # USB-A (right gripper camera)
+    width: 1280
+    height: 720
+    fps: 30
+    latency_ms: 0.0
+    exposure: 120
+    gain: 64
+    gamma: 130
+    wb_temp: 3800
+
+button:
+  bluetooth:
+    devices:                 # name substring | MAC | /dev/input/... (--test-button), null = unused; quote MACs
+      left: "26:07:02:F5:05:0B"    # Ulanzi RC05 remotes
+      right: "26:07:02:F5:1C:45"
+    double_click_s: 0.5      # click interval: double = set origin, triple = discard
+
+align:
+  fps: 30                    # training data rate
+  master_camera: left        # its frame range defines the time grid
+  origin_offset_xyz: [-0.2186, 0.0, -0.1529]   # TCP midpoint -> table edge midpoint [m], upright pose (README 6), fingertip TCP 16.5 cm
+  max_pose_gap_ms: 50        # max tracker/gripper logging gap (= 5 missed reads at 100 Hz)
+
+table:                       # viewer only (table, floor, plot z from floor); saved/training coords unchanged (table top z = 0)
+  height: 0.73               # floor -> table top [m]
+  size_xy: [0.8, 1.18]       # depth x (inward from edge, not measured), width y [m]
+
+gripper_model:
+  urdf: assets/urdf/umi_arai.urdf
+  tracker_link: tracker
+  tcp_link: tcp
+  open_angle_rad: 1.0472
+  trigger_angle_rad: 1.13446
+  finger_joint_coef: {revolute_2: -1, revolute_3: 1, revolute_4: 1, revolute_5: -1, revolute_6: -1, revolute_9: -1}   # 3D viewer only; outer links (4,5) share the sign of same-side gears (3,2)
+  trigger_joint_coef: {revolute_10: -1}
+  trigger_offset_deg: 66.8   # 3D viewer only: angle = coef * pull * trigger_angle_rad + this; 45 + 21.8 (released raw 1800 vs 2048)
+  tracker_frame_rpy_deg:     # saved by --calib-mount; null = uncalibrated (CAD)
+    left: [-1.74, -0.73, -1.44]
+    right: [-1.94, -0.72, -2.08]

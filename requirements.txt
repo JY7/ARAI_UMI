@@ -1,0 +1,11 @@
+# collection, alignment, GR00T conversion, viewer (Python 3.12, tested versions); GR00T training uses Isaac-GR00T's own env
+numpy==2.5.4
+scipy==1.18.1
+opencv-python==5.0.0.93
+PyYAML==6.0.3
+dynamixel-sdk==4.1.0
+openvr==2.12.1401
+evdev==2.0.0           # Bluetooth buttons
+rerun-sdk==0.39.0      # viewer (collect.py --viz, replay.py)
+matplotlib==3.11.2     # check_episode.py plot (not needed with --no-plot)
+pyarrow==26.0.0        # to_gr00t.py parquet

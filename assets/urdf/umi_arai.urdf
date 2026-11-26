@@ -1,0 +1,321 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="umi_arai">
+    <link name="tcp">
+        <inertial>
+            <mass value="1e-09" />
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <inertia ixx="4e-14" ixy="0" ixz="0" iyy="4e-14" iyz="0" izz="4e-14" />
+        </inertial>
+    </link>
+    <link name="tracker">
+        <inertial>
+            <mass value="1e-09" />
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <inertia ixx="4e-14" ixy="0" ixz="0" iyy="4e-14" iyz="0" izz="4e-14" />
+        </inertial>
+    </link>
+    <link name="p04_02_gear_48">
+        <inertial>
+            <mass value="2.34363e-05" />
+            <origin xyz="-0.00361039 -0.00890563 0.0233549" rpy="0 -0 0" />
+            <inertia ixx="1.93025e-08" ixy="-1.3385e-10" ixz="-2.06297e-09" iyy="1.98819e-08" iyz="-2.71778e-10" izz="1.66749e-09" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.018 -0.0084 -0.035" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_02_Gear_48.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="p04_03_link">
+        <inertial>
+            <mass value="1.38621e-05" />
+            <origin xyz="0 -0.0084 -0.0404145" rpy="0 -0 0" />
+            <inertia ixx="8.43029e-09" ixy="0" ixz="0" iyy="8.22376e-09" iyz="0" izz="4.43539e-10" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.033 -0.0084 -0.107169" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_03_Link.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="p04_03_link_1">
+        <inertial>
+            <mass value="1.38621e-05" />
+            <origin xyz="0 -0.0084 0.0404145" rpy="0 -0 0" />
+            <inertia ixx="8.43029e-09" ixy="0" ixz="0" iyy="8.22376e-09" iyz="0" izz="4.43539e-10" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.033 -0.0084 -0.0263397" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_03_Link.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="p04_06_gear_18">
+        <inertial>
+            <mass value="1.62112e-05" />
+            <origin xyz="0.00107291 -0.00737224 0.0340724" rpy="0 -0 0" />
+            <inertia ixx="1.25054e-08" ixy="-7.63422e-11" ixz="6.82296e-10" iyy="1.25688e-08" iyz="5.84317e-10" izz="7.9402e-10" />
+        </inertial>
+        <visual>
+            <origin xyz="0.018 -0.0084 -0.035" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_06_Gear_18.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="p04_08_trigger">
+        <inertial>
+            <mass value="3.52817e-06" />
+            <origin xyz="-0.00300001 0.0138609 -0.00851018" rpy="0 -0 0" />
+            <inertia ixx="8.51097e-10" ixy="0" ixz="0" iyy="3.30557e-10" iyz="1.36516e-10" izz="5.41439e-10" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.0025 -0.027 -0.0449309" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_08_Trigger.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.800000_0.800000_0.800000_0.000000_0.000000">
+                <color rgba="0.8 0.8 0.8 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="P04-103-FingerL">
+        <inertial>
+            <mass value="3.26658e-05" />
+            <origin xyz="-0.00381945 0.0084 0.01148" rpy="0 -0 0" />
+            <inertia ixx="1.9352e-08" ixy="0" ixz="3.37357e-09" iyy="1.84704e-08" iyz="0" izz="6.79967e-09" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.018 0.0084 -0.090829" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04-103-FingerL.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="P04-103-FingerR">
+        <inertial>
+            <mass value="3.26658e-05" />
+            <origin xyz="-0.00381945 0.009 0.01148" rpy="0 -0 0" />
+            <inertia ixx="1.9352e-08" ixy="0" ixz="3.37357e-09" iyy="1.84704e-08" iyz="0" izz="6.79967e-09" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.018 0.009 -0.090829" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04-103-FingerL.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+    </link>
+    <link name="P04-103-FingerR__loop_closure">
+        <inertial>
+            <mass value="1e-09" />
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <inertia ixx="4e-14" ixy="0" ixz="0" iyy="4e-14" iyz="0" izz="4e-14" />
+        </inertial>
+    </link>
+    <link name="P04-103-FingerL__loop_closure">
+        <inertial>
+            <mass value="1e-09" />
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <inertia ixx="4e-14" ixy="0" ixz="0" iyy="4e-14" iyz="0" izz="4e-14" />
+        </inertial>
+    </link>
+    <joint name="tcp_joint" type="fixed">
+        <origin xyz="-0.018 0.009 0.049171" rpy="3.92364e-44 1.39753e-87 -7.12364e-44" />
+        <axis xyz="0 0 1" />
+        <parent link="P04-103-FingerR" />
+        <child link="tcp" />
+    </joint>
+    <joint name="tracker_joint" type="fixed">
+        <origin xyz="-2.65358726e-10 -0.0177334002 -0.0191637" rpy="-0.523599 0 0" />
+        <axis xyz="0 0 1" />
+        <parent link="body" />
+        <child link="tracker" />
+    </joint>
+    <joint name="revolute_10" type="continuous">
+        <origin xyz="0.0025 0.027 0.0449309" rpy="0 0 0" />
+        <axis xyz="1 0 1.92088e-16" />
+        <parent link="body" />
+        <child link="p04_08_trigger" />
+    </joint>
+    <joint name="revolute_2" type="revolute">
+        <origin xyz="-0.018 0.0084 0.035" rpy="-4.21799e-32 0 -3.67124e-31" />
+        <axis xyz="0 1 0" />
+        <parent link="body" />
+        <child link="p04_06_gear_18" />
+        <limit effort="1" velocity="1" lower="-1.0472" upper="0" />
+    </joint>
+    <joint name="revolute_3" type="revolute">
+        <origin xyz="0.018 0.0084 0.035" rpy="1.70705e-27 0 -5.30433e-27" />
+        <axis xyz="0 1 0" />
+        <parent link="body" />
+        <child link="p04_02_gear_48" />
+        <limit effort="1" velocity="1" lower="0" upper="1.0472" />
+    </joint>
+    <joint name="revolute_4" type="continuous">
+        <origin xyz="0.033 0.0084 0.0263397" rpy="-6.97382e-19 2.39808173e-14 -2.07389e-19" />
+        <axis xyz="0 1 0" />
+        <parent link="body" />
+        <child link="p04_03_link_1" />
+    </joint>
+    <joint name="revolute_5" type="continuous">
+        <origin xyz="-0.033 0.0084 0.0263397" rpy="3.14159 1.86517468e-14 3.14159" />
+        <axis xyz="0 1 0" />
+        <parent link="body" />
+        <child link="p04_03_link" />
+    </joint>
+    <link name="body">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_01_Gear_24.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_04_Body.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="-8.67362e-19 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/_330_simple.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.866667_0.321569_0.156863_0.000000_0.000000">
+                <color rgba="0.866667 0.321569 0.156863 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_07_GripL.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.615686_0.811765_0.929412_0.000000_0.000000">
+                <color rgba="0.615686 0.811765 0.929412 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/P04_05_BodyMotor.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.325490_0.317647_0.317647_0.000000_0.000000">
+                <color rgba="0.32549 0.317647 0.317647 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="../meshes/XM430.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.866667_0.321569_0.156863_0.000000_0.000000">
+                <color rgba="0.866667 0.321569 0.156863 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="-2.65358733e-10 9.9999814e-05 0" rpy="-2.84507379e-43 0 0" />
+            <geometry>
+                <mesh filename="../meshes/VIVE_mount.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.513725_0.737255_0.407843_0.000000_0.000000">
+                <color rgba="0.513726 0.737255 0.407843 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="-2.65358732e-10 9.9999814e-05 1.38778e-17" rpy="1.88738e-15 0 1.0223e-16" />
+            <geometry>
+                <mesh filename="../meshes/VIVE_Tracker_3_0_3D.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.250980_0.250980_0.250980_0.000000_0.000000">
+                <color rgba="0.25098 0.25098 0.25098 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="7.01086346e-05 -1.86040644e-10 0.0249669" rpy="0 0 3.14159" />
+            <geometry>
+                <mesh filename="../meshes/Cam_DXL.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.513725_0.737255_0.407843_0.000000_0.000000">
+                <color rgba="0.513726 0.737255 0.407843 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="7.01086346e-05 -1.86040644e-10 0.0249669" rpy="0 0 3.14159" />
+            <geometry>
+                <mesh filename="../meshes/Cam_mount1.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.513725_0.737255_0.407843_0.000000_0.000000">
+                <color rgba="0.513726 0.737255 0.407843 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="7.01086346e-05 -1.86040644e-10 0.0249669" rpy="0 0 3.14159" />
+            <geometry>
+                <mesh filename="../meshes/Cable_Holder.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.513725_0.737255_0.407843_0.000000_0.000000">
+                <color rgba="0.513726 0.737255 0.407843 1" />
+            </material>
+        </visual>
+        <visual>
+            <origin xyz="7.01086346e-05 -1.86040644e-10 0.0249669" rpy="0 0 3.14159" />
+            <geometry>
+                <mesh filename="../meshes/Camera.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.262745_0.282353_0.301961_0.000000_0.000000">
+                <color rgba="0.262745 0.282353 0.301961 1" />
+            </material>
+        </visual>
+    </link>
+    <joint name="revolute_6" type="continuous">
+        <origin xyz="-3.46945e-18 -0.0174 0.080829" rpy="-2.01179e-27 -2.20106e-13 6.30016e-27" />
+        <axis xyz="0 1 0" />
+        <parent link="p04_02_gear_48" />
+        <child link="P04-103-FingerR" />
+    </joint>
+    <joint name="revolute_7_loop_closure" type="continuous">
+        <origin xyz="2.08167e-17 -0.0168 0.080829" rpy="6.97382e-19 -2.43994e-13 2.07389e-19" />
+        <axis xyz="-0 1 -0" />
+        <parent link="p04_03_link_1" />
+        <child link="P04-103-FingerR__loop_closure" />
+    </joint>
+    <joint name="revolute_8_loop_closure" type="continuous">
+        <origin xyz="0 0.0006 -0.080829" rpy="3.14159 2.02974e-13 -7.03317e-29" />
+        <axis xyz="0 1 0" />
+        <parent link="p04_03_link" />
+        <child link="P04-103-FingerL__loop_closure" />
+    </joint>
+    <joint name="revolute_9" type="continuous">
+        <origin xyz="1.04083e-17 -1.73472e-18 0.080829" rpy="-1.70906e-29 -1.84681e-13 -3.14159" />
+        <axis xyz="-0 1 -0" />
+        <parent link="p04_06_gear_18" />
+        <child link="P04-103-FingerL" />
+    </joint>
+</robot>
