@@ -23,10 +23,10 @@ git clone https://github.com/JY7/ARAI_UMI.git ~/ARAI_UMI
 bash ~/ARAI_UMI/install.sh
 ```
 1. 스크립트가 띄운 Steam 창: 로그인 → SteamVR '설치'
-2. 로그아웃/로그인 (포트·입력 장치 권한 적용)
+2. PC 로그아웃 → 다시 로그인 (포트·입력 장치 권한 적용 → `id -nG`에 `dialout`, `input` 있어야 함)
 3. 스크립트 한 번 더 → 끝에 `SteamVR: OK (no-HMD config applied)`
 
-아래 명령은 모두 `umi` (이 폴더로 이동 + venv) 다음에 실행. ROS2 `setup.bash`를 불러온 터미널에서는 쓰지 않음.
+**아래 `python3` 명령은 모두 새 터미널마다 먼저 `umi` 실행** (이 폴더로 이동 + venv 켜기). ROS2 `setup.bash`를 불러온 터미널에서는 쓰지 않음.
 
 ## 2. 장치 연결
 
@@ -41,7 +41,7 @@ bash ~/ARAI_UMI/install.sh
 ```bash
 bluetoothctl
 power on
-scan on               # 버튼 MAC 확인 → scan off
+scan on               # "Ulanzi RC05"의 MAC 확인 → scan off
 pair <MAC>
 trust <MAC>           # 다시 켜면 자동 재연결
 connect <MAC>
@@ -55,10 +55,10 @@ PC·장비마다 바꿀 값:
 | 항목 | 값 찾기 | 키 |
 |---|---|---|
 | 사용 손 | | `hands` (`[right]` = 한손) |
-| 트래커 | `python3 collect.py --list-vive` (SteamVR 실행 중) | `vive.serials` |
+| 트래커 | `umi && python3 collect.py --list-vive` (SteamVR 실행 중) | `vive.serials` |
 | U2D2 포트 | `ls /dev/serial/by-id/` | `dynamixel.port` |
-| 카메라 | `ls /dev/v4l/by-path/` (한 대씩 꽂아서 확인) | `cameras.<손>.device` |
-| BT 버튼 | `python3 collect.py --test-button` | `button.bluetooth.devices.<손>` (MAC은 따옴표로) |
+| 카메라 | `watch -n1 ls /dev/v4l/by-path/` 띄워 두고 한 대씩 꽂기 → 새로 생긴 것 중 `-usb-…-video-index0` | `cameras.<손>.device` |
+| BT 버튼 | 버튼 연결 후 `umi && python3 collect.py --test-button` (켠 뒤 연결된 버튼은 안 보임) | `button.bluetooth.devices.<손>` (MAC은 따옴표로) |
 
 - 포트·카메라는 `/dev/ttyUSB0`, `/dev/videoN` 대신 위 경로로 (다시 꽂으면 번호가 바뀜). 카메라 경로는 USB 포트 위치라 항상 같은 포트에 꽂기.
 - 카메라 화질 (`cameras.<손>`): `width`·`height`·`fps` (1280×720, 30), `exposure` (100µs 단위, 30fps면 333 이하, `null` = 자동: 어두우면 fps 저하), `gamma` (밝기), `wb_temp` (화이트밸런스 K). 노출을 늘리면 모션 블러 → 밝기는 `gamma`로.
@@ -67,14 +67,15 @@ PC·장비마다 바꿀 값:
 
 | 명령 | 방법 | 다시 할 때 |
 |---|---|---|
-| `python3 collect.py --calib-dxl` | Enter → 그리퍼가 약하게 열림 끝·닫힘 끝까지 움직임 (손가락 주변 비우기) | 모터 교체 |
-| `python3 collect.py --calib-mount` | SteamVR 실행 중. 자세 A: 손가락 아래로 수직 → 자세 B: 손잡이 아래로 수직 (각 1.5초 정지) | 트래커 재장착 |
+| `umi && python3 collect.py --calib-dxl` | Enter → 그리퍼가 약하게 열림 끝·닫힘 끝까지 움직임 (손가락 주변 비우기) | 모터 교체 |
+| `umi && python3 collect.py --calib-mount` | SteamVR 실행 중. 자세 A: 손가락 아래로 수직 → 자세 B: 손잡이 아래로 수직 (각 1.5초 정지) | 트래커 재장착 |
 
 값은 `config.yaml`에 저장. 그리퍼 값이 `null`이면 수집이 시작되지 않음.
 
 ## 5. 테스트
 
 ```bash
+umi
 python3 collect.py --no-dxl --no-cam     # 트래커만
 python3 collect.py --no-vive --no-cam    # 트리거 → 그리퍼만
 python3 collect.py --no-vive --no-dxl    # 카메라만 (좌우 확인)
@@ -85,6 +86,7 @@ python3 collect.py                       # 전체: Rerun의 그리퍼가 실제�
 ## 6. 수집
 
 ```bash
+umi
 python3 collect.py --data cup         # data/cup에 저장
 ```
 
@@ -111,6 +113,7 @@ python3 collect.py --data cup         # data/cup에 저장
 ## 7. 데이터셋 변환
 
 ```bash
+umi
 python3 replay.py cup             # 재생 (Rerun)
 python3 check_episode.py cup      # 시간 정렬 → aligned.npz, check.png
 python3 to_gr00t.py cup           # → ~/datasets/cup (--out으로 변경)
