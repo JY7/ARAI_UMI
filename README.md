@@ -77,8 +77,8 @@ cameras:
 button:
   bluetooth:
     devices:
-      left: "26:07:02:F5:05:0B"
-      right: "26:07:02:F5:1C:45"
+      left: "26:07:02:F5:1C:45"
+      right: "26:07:02:F5:05:0B"
 ```
 
 - 포트·카메라는 `/dev/ttyUSB0`, `/dev/videoN` 대신 위 경로로 (다시 꽂으면 번호가 바뀜). 카메라 경로는 USB 포트 위치라 항상 같은 포트에 꽂기.
@@ -105,19 +105,19 @@ python3 collect.py --no-vive --no-dxl    # 카메라만 (좌우 확인)
 ```
 정상: 상태 줄에 tracker·gripper·cam 빨간 경고 없음.
 
-## 6. 수집
-
-```bash
-umi
-python3 collect.py --data cup         # data/cup에 저장
-```
-
 | 입력 | 동작 |
 |---|---|
 | 버튼 1번 / `space` | 녹화 시작·정지 |
 | 버튼 빠르게 2번 / `o` | 원점 설정 |
 | 버튼 빠르게 3번 / `d` | 현재(또는 직전) 에피소드 삭제 (되돌릴 수 없음) |
 | `t` / `q` | task 변경 / 종료 (mp4 압축이 끝날 때까지 기다림) |
+
+## 6. 수집
+
+```bash
+umi
+python3 collect.py --data cup         # data/cup에 저장
+```
 
 1. 세션 시작 시 원점 설정 (아래). 원점 없이 녹화한 에피소드는 변환에서 빠짐.
 2. 에피소드마다: 버튼 → 작업 → 버튼 ("start" / "stop" 음성).

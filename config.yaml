@@ -63,8 +63,8 @@ cameras:
 button:
   bluetooth:
     devices:                 # name substring | MAC | /dev/input/... (--test-button), null = unused; quote MACs
-      left: "26:07:02:F5:05:0B"    # Ulanzi RC05 remotes
-      right: "26:07:02:F5:1C:45"
+      left: "26:07:02:F5:1C:45"    # Ulanzi RC05 remotes
+      right: "26:07:02:F5:05:0B"
     double_click_s: 0.5      # click interval: double = set origin, triple = discard
 
 align:
