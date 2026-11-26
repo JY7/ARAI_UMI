@@ -139,7 +139,7 @@ class LiveViz(threading.Thread):
     def __init__(self, cfg, vive, dxl, cams, rec):
         super().__init__(daemon=True)
         self.vive, self.dxl, self.cams, self.rec, self.cfg = vive, dxl, cams, rec, cfg
-        self.dxl_hands = (cfg.get("dynamixel") or {}).get("hands") or {}
+        self.dxl_hands = cfg["dynamixel"]["hands"]
         self.viz = GripperViz("umi_collect", cfg, cfg["hands"], [c.name for c in cams], live=True)
         self._halt = threading.Event()
         self._has_origin = None
@@ -167,13 +167,13 @@ class LiveViz(threading.Thread):
                 self._has_origin = o is not None
                 self.viz.show_table(self._has_origin)
             for h in self.viz.hands:
-                T = self.vive.latest_T.get(h) if self.vive else None
-                d = self.dxl.latest.get(h) if self.dxl else None
+                T = self.vive.latest_T.get(h)
+                d = self.dxl.latest.get(h)
                 hc = self.dxl_hands.get(h, {})
                 self.viz.set(h, home(h, self.viz.hands) if T is None else tcp_in_origin(self.cfg, o, h, T),
                              None if d is None else fraction(hc, "gripper", d["pos"]),
                              None if d is None else fraction(hc, "trigger", d["trigger"]),
-                             self.vive.valid.get(h, False) if self.vive else True)
+                             self.vive.valid.get(h, False))
             for c in self.cams:
                 f = c.latest
                 now = time.monotonic()

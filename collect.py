@@ -114,9 +114,9 @@ def stopped_line(s, vive, dxl):
     c = s["counts"]
     issues = ["cam %s dropped %d" % (k, v) for k, v in s["dropped_frames"].items() if v]
     issues += ["cam %s corrupt %d" % (k, v) for k, v in s["corrupt_frames"].items() if v]
-    if vive is not None and vive.is_alive() and not c.get("tracker_rows"):
+    if vive.is_alive() and not c.get("tracker_rows"):
         issues.append("no tracker data")
-    if dxl is not None and dxl.is_alive() and not c.get("gripper_rows"):
+    if dxl.is_alive() and not c.get("gripper_rows"):
         issues.append("no gripper data")
     tag = "stopped" if any(k.startswith("cam_") for k in c) else "saved"
     line = "[%s] %s  %.1fs" % (tag, s["name"], s["duration_s"])
@@ -145,16 +145,12 @@ class StatusLine:
     def _hand(self, h):
         L = h[0].upper()
         vive, dxl = self.vive, self.dxl
-        if vive is None:
-            pos = ""
-        elif vive.is_alive() and vive.valid.get(h) and h in vive.latest_T:
+        if vive.is_alive() and vive.valid.get(h) and h in vive.latest_T:
             p = tcp_in_origin(self.cfg, self.rec.origin, h, vive.latest_T[h])[:3, 3] * 100
             pos = " x%+6.1f y%+6.1f z%+6.1f" % tuple(p)
         else:
             pos = " " + color("%-23s" % "tracker lost", RED)
-        if dxl is None:
-            grip = ""
-        elif dxl.is_alive() and h in dxl.latest:
+        if dxl.is_alive() and h in dxl.latest:
             grip = " grip %3.0f%%" % (100 * fraction(self.dxl_hands.get(h, {}), "gripper", dxl.latest[h]["pos"]))
         else:
             grip = " grip " + color(" --", RED)
@@ -165,25 +161,22 @@ class StatusLine:
         parts = [color("REC %5.1fs" % ((time.monotonic_ns() - rec.episode.t_start_ns) * 1e-9), RED, BOLD)
                  if rec.recording else "idle      "]
         parts += [self._hand(h) for h in self.hands]
-        if self.vive is not None:
-            if rec.origin:
-                age = origin_age_s(rec.origin)
-                parts.append("origin " + color("%dm" % (age // 60) if age < 3600 else "%.1fh" % (age / 3600), GREEN))
-            else:
-                parts.append(color("no origin", YELLOW))
+        if rec.origin:
+            age = origin_age_s(rec.origin)
+            parts.append("origin " + color("%dm" % (age // 60) if age < 3600 else "%.1fh" % (age / 3600), GREEN))
+        else:
+            parts.append(color("no origin", YELLOW))
         bad = []
-        if self.vive is not None:
-            if not self.vive.is_alive():
-                bad.append("tracker OFF")
-            elif self.vive.rate < 0.8 * self.vive_hz:
-                bad.append("tracker %.0fHz" % self.vive.rate)
-        if self.dxl is not None:
-            if not self.dxl.is_alive():
-                bad.append("gripper OFF")
-            elif self.dxl.error:
-                bad.append("gripper ERR")
-            elif self.dxl.rate < 0.8 * self.dxl_hz:
-                bad.append("gripper %.0fHz" % self.dxl.rate)
+        if not self.vive.is_alive():
+            bad.append("tracker OFF")
+        elif self.vive.rate < 0.8 * self.vive_hz:
+            bad.append("tracker %.0fHz" % self.vive.rate)
+        if not self.dxl.is_alive():
+            bad.append("gripper OFF")
+        elif self.dxl.error:
+            bad.append("gripper ERR")
+        elif self.dxl.rate < 0.8 * self.dxl_hz:
+            bad.append("gripper %.0fHz" % self.dxl.rate)
         for c in self.cams:
             if not c.is_alive() or c.error:
                 bad.append("cam %s lost" % c.name)
@@ -217,20 +210,18 @@ class Notifier:
 
 def sensor_problems(vive, dxl, cams, hands):
     p = {}
-    if vive is not None:
-        if not vive.is_alive():
-            p["tracker stopped"] = vive.error or "vive stopped"
-        else:
-            if vive.error:
-                p["tracker error"] = vive.error
-            for h in hands:
-                if not vive.valid.get(h, False):
-                    p["%s tracker lost" % h] = "tracker %s lost" % h
-    if dxl is not None:
-        if not dxl.is_alive():
-            p["gripper stopped"] = dxl.error or "dxl stopped"
-        elif dxl.error:
-            p["gripper error"] = dxl.error
+    if not vive.is_alive():
+        p["tracker stopped"] = vive.error or "vive stopped"
+    else:
+        if vive.error:
+            p["tracker error"] = vive.error
+        for h in hands:
+            if not vive.valid.get(h, False):
+                p["%s tracker lost" % h] = "tracker %s lost" % h
+    if not dxl.is_alive():
+        p["gripper stopped"] = dxl.error or "dxl stopped"
+    elif dxl.error:
+        p["gripper error"] = dxl.error
     for c in cams:
         if not c.is_alive():
             p["%s camera stopped" % c.name] = "%s: %s" % (c.label, c.error or "stopped")
@@ -308,16 +299,11 @@ def main():
     ap.add_argument("--data", default=None,
                     help="subfolder under data/ for episodes, e.g. --data cup -> data/cup (absolute path used as is). "
                          "Numbering restarts at ep000 in a new folder")
-    ap.add_argument("--no-vive", action="store_true", help="run without trackers (component test)")
-    ap.add_argument("--no-dxl", action="store_true", help="run without dynamixel")
-    ap.add_argument("--no-cam", action="store_true", help="run without cameras")
     ap.add_argument("--hands", nargs="+", choices=["left", "right"],
                     help="hands to use (overrides config hands), e.g. --hands right")
     args = ap.parse_args()
 
     cfg = apply_hands(load_current_config(), args.hands)
-    if args.no_cam:
-        cfg["cameras"] = {}
 
     if args.list_vive:
         for i, cls, serial in ViveSource.list_devices():
@@ -341,17 +327,17 @@ def main():
         calibrate(cfg["dynamixel"], beep)
         return
 
-    unmeasured = [h for h, d in cfg["dynamixel"]["hands"].items() if not args.no_dxl
-                  and None in [d.get(k) for k in ("trigger_open", "trigger_closed", "gripper_open", "gripper_closed")]]
+    unmeasured = [h for h, d in cfg["dynamixel"]["hands"].items()
+                  if None in [d.get(k) for k in ("trigger_open", "trigger_closed", "gripper_open", "gripper_closed")]]
     if unmeasured:   # alignment uses recording-time values, so filling them in later won't fix recorded episodes
         sys.exit("dynamixel.hands.%s: open/closed raw values not measured (null). Run `python3 collect.py --calib-dxl --hands %s`, "
                  "or collect with --hands %s" % (unmeasured, " ".join(unmeasured), " ".join(h for h in cfg["hands"] if h not in unmeasured)))
     rec = Recorder(cfg, data_path(args.data or "", must_exist=False))
-    vive = None if args.no_vive else ViveSource(cfg["vive"], rec)
-    frames = FrameWatch() if vive is not None else None   # SteamVR frame change -> origin invalid
-    dxl = None if args.no_dxl else DxlSource(cfg["dynamixel"], rec)
-    cams = [CameraSource(n, c, rec) for n, c in (cfg.get("cameras") or {}).items()]
-    sources = [s for s in [vive, dxl] + cams if s is not None]
+    vive = ViveSource(cfg["vive"], rec)
+    frames = FrameWatch()   # SteamVR frame change -> origin invalid
+    dxl = DxlSource(cfg["dynamixel"], rec)
+    cams = [CameraSource(n, c, rec) for n, c in cfg["cameras"].items()]
+    sources = [vive, dxl] + cams
     # fallible setup before starting sensors (a failure after would leave gripper torque on)
     live = None
     if args.viz:
@@ -373,14 +359,14 @@ def main():
             live.start()
         print("data: %s | task: %s" % (rec.root, rec.task))
         print("keys: space start/stop | d discard last | t change task | o set origin | q quit")
-        if frames is not None and frames.last and drop_stale_origin(rec, frames.last[0]):
+        if frames.last and drop_stale_origin(rec, frames.last[0]):
             say("[origin] SteamVR coordinates changed after the origin was set (%s) -> not used. Set the origin again."
                 % time.strftime("%H:%M:%S", time.localtime(frames.last[0])))
             beep("tracking changed, set origin again")
         print("origin: %s" % (rec.origin["time"] if rec.origin else "none - stand gripper(s) at the table edge, then 'o' (two hands: symmetric about the edge midpoint, one hand: at the midpoint)"))
         mount = (cfg.get("gripper_model") or {}).get("tracker_frame_rpy_deg") or {}
         uncal = [h for h in cfg["hands"] if mount.get(h) is None]
-        if vive is not None and uncal:
+        if uncal:
             say("[warn] tracker mount not calibrated: %s -> run `python3 collect.py --calib-mount` (can be done later, applied by check_episode)" % uncal)
         while True:
             cmd, src = buttons.get(0.1)
@@ -397,7 +383,7 @@ def main():
                     say("\n[recording] %s  (%s)" % (name, src))
                     alarm.reset()
                     speech = ["start"]
-                    if vive is not None and rec.origin is None:
+                    if rec.origin is None:
                         say("[warn] no origin -> this episode will be excluded by to_gr00t (set with 'o' or button double-click)")
                         speech.append("no origin")
                     beep(", ".join(speech))
@@ -421,24 +407,21 @@ def main():
                 say("\n[origin] cannot set origin while recording")
                 beep("recording")
             elif cmd == "origin":
-                if vive is None:
-                    say("\n[origin] vive disabled")
-                else:
-                    try:
-                        say("\n[origin] measuring for 1s (hold gripper still)...")
-                        T_o, raw, msg = calibrate_origin_live(vive, cfg, hands=cfg["hands"], level=True)
-                        if msg:
-                            say("[origin] " + msg)
-                        rec.origin = save_origin(rec.origin_path, T_o, raw)
-                        say("[origin] saved: %s  position (z-up world) %s" % (rec.origin_path, T_o[:3, 3].round(3)))
-                        beep("origin set")
-                    except Exception as e:
-                        say("[origin] failed: %s" % e)
-                        beep("origin failed")
-            elif cmd == "quit":
+                try:
+                    say("\n[origin] measuring for 1s (hold gripper still)...")
+                    T_o, raw, msg = calibrate_origin_live(vive, cfg, hands=cfg["hands"], level=True)
+                    if msg:
+                        say("[origin] " + msg)
+                    rec.origin = save_origin(rec.origin_path, T_o, raw)
+                    say("[origin] saved: %s  position (z-up world) %s" % (rec.origin_path, T_o[:3, 3].round(3)))
+                    beep("origin set")
+                except Exception as e:
+                    say("[origin] failed: %s" % e)
+                    beep("origin failed")
+            elif cmd == "quit" or (live and live.viz.viewer.poll() is not None):   # viewer window closed -> quit
                 break
 
-            for t, line in frames.poll() if frames is not None else []:
+            for t, line in frames.poll():
                 if drop_stale_origin(rec, t):
                     say("\n[origin] SteamVR coordinates changed (%s) -> origin no longer valid, set it again%s"
                         % (line, "; this episode is affected, discard it" if rec.recording else ""))
@@ -461,8 +444,7 @@ def main():
 
             items = {s.label: s.error for s in sources if s.is_alive()}
             items.update({"%s camera settings" % c.name: c.warning for c in cams})
-            if dxl is not None:
-                items["dynamixel"] = dxl.warning
+            items["dynamixel"] = dxl.warning
             items.update({"%s button" % b.hand: b.error for b in buttons.bt})
             for msg in notifier.changes(items):
                 say("\n" + msg)
