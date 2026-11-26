@@ -60,6 +60,27 @@ PC·장비마다 바꿀 값:
 | 카메라 | `watch -n1 ls /dev/v4l/by-path/` 띄워 두고 한 대씩 꽂기 → 새로 생긴 것 중 `-usb-…-video-index0` | `cameras.<손>.device` |
 | BT 버튼 | 버튼 연결 후 `umi && python3 collect.py --test-button` (켠 뒤 연결된 버튼은 안 보임) | `button.bluetooth.devices.<손>` (MAC은 따옴표로) |
 
+예 (`config.yaml`에서 이 줄들만 바꿈, 경로는 `ls`에 나온 이름 앞에 폴더까지):
+```yaml
+hands: [left, right]
+vive:
+  serials:
+    left: LHR-0AB89868
+    right: LHR-E0EC229E
+dynamixel:
+  port: /dev/serial/by-id/usb-FTDI_USB__-__Serial_Converter_FT89FAJ1-if00-port0
+cameras:
+  left:
+    device: /dev/v4l/by-path/pci-0000:00:14.0-usb-0:4:1.0-video-index0
+  right:
+    device: /dev/v4l/by-path/pci-0000:00:14.0-usb-0:3:1.0-video-index0
+button:
+  bluetooth:
+    devices:
+      left: "26:07:02:F5:05:0B"
+      right: "26:07:02:F5:1C:45"
+```
+
 - 포트·카메라는 `/dev/ttyUSB0`, `/dev/videoN` 대신 위 경로로 (다시 꽂으면 번호가 바뀜). 카메라 경로는 USB 포트 위치라 항상 같은 포트에 꽂기.
 - 카메라 화질 (`cameras.<손>`): `width`·`height`·`fps` (1280×720, 30), `exposure` (100µs 단위, 30fps면 333 이하, `null` = 자동: 어두우면 fps 저하), `gamma` (밝기), `wb_temp` (화이트밸런스 K). 노출을 늘리면 모션 블러 → 밝기는 `gamma`로.
 
@@ -68,7 +89,7 @@ PC·장비마다 바꿀 값:
 | 명령 | 방법 | 다시 할 때 |
 |---|---|---|
 | `umi && python3 collect.py --calib-dxl` | Enter → 그리퍼가 약하게 열림 끝·닫힘 끝까지 움직임 (손가락 주변 비우기) | 모터 교체 |
-| `umi && python3 collect.py --calib-mount` | SteamVR 실행 중. 자세 A: 손가락 아래로 수직 → 자세 B: 손잡이 아래로 수직 (각 1.5초 정지) | 트래커 재장착 |
+| `umi && python3 collect.py --calib-mount` | SteamVR 실행 중. 자세 A: 그리퍼 끝이 바닥을 향하게 세워 들기 → 자세 B: 평소 잡는 자세 (손잡이 아래, 그리퍼 끝은 수평으로 앞). 자세마다 Enter 후 1.5초 정지 | 트래커 재장착 |
 
 값은 `config.yaml`에 저장. 그리퍼 값이 `null`이면 수집이 시작되지 않음.
 
@@ -76,10 +97,11 @@ PC·장비마다 바꿀 값:
 
 ```bash
 umi
+python3 collect.py --test-button         # 버튼만: 누를 때마다 줄이 뜨면 정상
+python3 collect.py                       # 전체: 버튼 빠르게 2번(또는 o)으로 원점 설정 (6번 그림) 후 Rerun의 그리퍼가 실제와 같이 움직이면 정상
 python3 collect.py --no-dxl --no-cam     # 트래커만
 python3 collect.py --no-vive --no-cam    # 트리거 → 그리퍼만
 python3 collect.py --no-vive --no-dxl    # 카메라만 (좌우 확인)
-python3 collect.py                       # 전체: Rerun의 그리퍼가 실제와 같이 움직이면 정상
 ```
 정상: 상태 줄에 tracker·gripper·cam 빨간 경고 없음.
 
