@@ -423,9 +423,12 @@ def main():
 
             for t, line in frames.poll():
                 if drop_stale_origin(rec, t):
+                    hit = rec.recording   # episode mixes two frames -> drop it
+                    if hit:
+                        rec.stop(keep=False)
                     say("\n[origin] SteamVR coordinates changed (%s) -> origin no longer valid, set it again%s"
-                        % (line, "; this episode is affected, discard it" if rec.recording else ""))
-                    beep("tracking changed, discard, set origin again" if rec.recording else "tracking changed, set origin again")
+                        % (line, "; current episode discarded" if hit else ""))
+                    beep("tracking changed, discarded, set origin again" if hit else "tracking changed, set origin again")
             for sensor in sources:
                 if sensor.label not in stopped and not sensor.is_alive():
                     stopped.add(sensor.label)
@@ -459,6 +462,7 @@ def main():
         pass
     finally:
         # order: save -> stop sensors (gripper torque off) -> restore terminal -> print (EIO after SIGHUP, ignored)
+        handlers = {s: signal.signal(s, signal.SIG_IGN) for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)}   # a 2nd Ctrl+C must not skip torque off
         saved = rec.stop(keep=True) if rec.recording else None
         if live is not None:
             live.stop()
@@ -468,6 +472,8 @@ def main():
             if s.ident is not None:
                 s.join(timeout=2.0)
         buttons.close()
+        for s, h in handlers.items():   # Ctrl+C may interrupt the mp4 wait below (JPGs are kept)
+            signal.signal(s, h)
         try:
             if saved:
                 say("\n[stopped] %s" % saved["name"])

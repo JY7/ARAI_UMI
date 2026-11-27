@@ -70,7 +70,7 @@ button:
 align:
   fps: 30                    # training data rate
   master_camera: left        # its frame range defines the time grid
-  origin_offset_xyz: [-0.2186, 0.0, -0.1529]   # TCP midpoint -> table edge midpoint [m], upright pose (README 6), fingertip TCP 16.5 cm
+  origin_offset_xyz: [-0.2186, 0.0, -0.1529]   # TCP midpoint -> table edge midpoint [m], upright pose (README 5), fingertip TCP 16.5 cm
   max_pose_gap_ms: 50        # max tracker/gripper logging gap (= 5 missed reads at 100 Hz)
 
 table:                       # viewer only (table, floor, plot z from floor); saved/training coords unchanged (table top z = 0)

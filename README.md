@@ -16,7 +16,7 @@ Vive 트래커 + 다이나믹셀 트리거 그리퍼 + USB 손목 카메라를 �
 
 ## 1. 설치
 
-Ubuntu 20.04 ~ 24.04.
+Ubuntu 20.04, 24.04 테스트 완료.
 ```bash
 sudo apt install -y git
 git clone https://github.com/JY7/ARAI_UMI.git ~/ARAI_UMI
@@ -32,7 +32,7 @@ bash ~/ARAI_UMI/install.sh
 
 **트래커** (처음 1회 페어링)
 1. 베이스스테이션 설치
-2. 트래커마다 USB 동글 1개 씩 연결
+2. 트래커마다 USB 동글 1개씩 연결
 3. SteamVR 실행: `nohup steam steam://rungameid/250820 >/dev/null 2>&1 &`
 4. SteamVR 메뉴(≡) → Devices → Pair Controller → HTC Vive Tracker → 꺼진 트래커의 전원 버튼을 약 2초 눌러 켜기 (LED 파랑 깜빡임 = 페어링 대기)
 5. LED가 초록이 되면 Done. 다음부터는 전원만 켜면 연결
@@ -143,7 +143,7 @@ python3 collect.py --data cup         # data/cup에 저장
 5. 다음 에피소드는 2번부터 반복.
 
 문제가 생기면:
-- "tracking changed, set origin again" 음성(SteamVR이 자기 좌표계를 바꿨다는 알림) → 원점 다시 설정(녹화 중이었으면 "discard": 그 에피소드 버림).
+- "tracking changed, set origin again" 음성(SteamVR이 자기 좌표계를 바꿨다는 알림) → 원점 다시 설정 필요 (녹화 중이었으면 그 에피소드는 자동 삭제).
 - 카메라가 빠짐 → collect 재실행 (원점 유지).
 
 ## 7. 데이터셋 변환
